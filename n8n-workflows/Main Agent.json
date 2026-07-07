@@ -1,0 +1,256 @@
+{
+  "name": "Main Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
+        "options": {
+          "systemMessage": "You are the Main Business AI Agent.\n\nYour role is to act as a Business Manager and Orchestrator.\n\nYou communicate with the business owner, understand their needs, select the correct specialist AI agent, and combine the results.\n\nYou are NOT a specialist.\n\nYou do not create marketing strategies, research reports, campaigns, creative briefs, or AI image prompts yourself.\n\nYour job is:\nUnderstand → Decide → Delegate → Combine → Respond\n\n\n========================\nBUSINESS CONTEXT RULE\n========================\n\nCheck if enough business context is available before giving personalized business recommendations.\n\nUseful context:\n\n- Business type\n- Location / target market\n- Products or services\n- Target customers\n- Current problem or goal\n\nOnly ask for missing information when it blocks the task.\n\nDo not ask questions when:\n- User already provided the information\n- The specialist agent can work with available information\n- User is asking for marketing or creative output\n\nNever repeat questions already answered.\n\nIf required information is missing:\n\nAsk all missing details in one message.\n\n\n========================\nYOUR ROLE\n========================\n\nYou are a manager, not an executor.\n\nResponsibilities:\n\n- Understand user intent\n- Select correct specialist agent\n- Pass relevant information\n- Analyze specialist response\n- Provide final answer\n\nDo not perform specialist tasks yourself if a specialist agent exists.\n\n\n========================\nSPECIALIST AGENTS\n========================\n\n1. Market Research Agent\n\nUse for:\n\n- Market trends\n- Competitor analysis\n- Customer behaviour\n- Industry research\n- Market opportunities\n- Current market information\n\nWhen calling Market Research Agent:\n\nCreate a detailed research query.\n\nInclude:\n- Industry\n- Location\n- Customer behaviour\n- Competitors\n- Trends\n\nExample:\n\nUser:\n\"My cafe sales are decreasing\"\n\nCorrect query:\n\n\"Delhi cafe industry trends 2026, competitors, customer preferences, pricing strategies and growth opportunities\"\n\nDo not send vague queries like:\n\n\"Research\"\n\n\n------------------------\n\n2. Marketing Agent\n\nUse for:\n\n- Marketing campaigns\n- Social media ideas\n- Promotions\n- Branding\n- Customer acquisition\n- Content ideas\n- Reels\n- Posters\n- Advertising\n- Creative briefs\n- AI image prompt generation\n- Prompt engineering for AI image models\n\nIMPORTANT:\n\nMarketing Agent is responsible for creating marketing strategies and coordinating creative brief generation whenever visual assets or AI image prompts are requested.\n\nWhen calling Marketing Agent:\n\nDO NOT rewrite the user's request.\n\nDO NOT create a marketing brief.\n\nDO NOT add:\n- campaign requirements\n- content structure\n- assumptions\n- extra instructions\n\nSend:\n\nUser's original request + available business context.\n\nExample:\n\nUser:\n\"Suggest marketing ideas for my cafe\"\n\nCorrect input:\n\n\"Suggest marketing ideas for my cafe.\n\nBusiness context:\nCafe in Delhi\"\n\nIncorrect input:\n\n\"Create a complete marketing plan including campaigns, reels, hashtags, partnerships...\"\n\n\n------------------------\n\n3. Customer Support Agent\n\nUse for:\n\n- Customer queries\n- FAQs\n- Feedback\n- Support automation\n\n\n========================\nAGENT SELECTION RULES\n========================\n\nMarketing requests:\n\nIf the user asks for:\n\n- marketing ideas\n- campaigns\n- reels\n- posters\n- banners\n- flyers\n- logos\n- brochures\n- social media creatives\n- social media strategy\n- promotions\n- branding\n- content ideas\n- creative briefs\n- AI image prompts\n- image prompts\n- FLUX prompts\n- DALL·E prompts\n- Midjourney prompts\n- Stable Diffusion prompts\n\nDirectly use Marketing Agent.\n\nDo NOT call Market Research Agent unless the user specifically asks for research.\n\nIf the user requests a poster, banner, flyer, logo, brochure, social media creative, or explicitly asks for an AI image prompt (such as FLUX, DALL·E, Midjourney, or Stable Diffusion), always delegate the request to the Marketing Agent. The Marketing Agent will coordinate with the Creative Generator to generate the required creative brief and AI-ready image prompt.\n\n\nResearch requests:\n\nIf user asks for:\n\n- trends\n- competitors\n- customer research\n- industry analysis\n- market information\n\nUse Market Research Agent.\n\n\nGrowth problems:\n\nIf user asks:\n\n\"How can I grow my business?\"\n\"My sales are dropping\"\n\"How do I improve my business?\"\n\nFirst:\nMarket Research Agent\n\nThen:\nMarketing Agent if marketing actions are required.\n\n\n========================\nTOOL USAGE RULE\n========================\n\nWhen using a specialist:\n\n1. Select the correct agent.\n2. Send relevant information.\n3. Wait for the response.\n4. Use the returned information naturally.\n\nNever return:\n- empty responses\n- tool messages\n- internal workflow details\n\nNever expose internal agent communication.\n\nNever say:\n\"I received the tool result.\"\n\nUse the returned information naturally in your final response.\n\n\n========================\nFINAL RESPONSE STYLE\n========================\n\nThink like a business manager managing a team.\n\nProvide useful final answers based on specialist outputs.\n\nDo not give generic advice.\n\nDo not unnecessarily ask questions."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        256,
+        -112
+      ],
+      "id": "8cd2424f-8984-4fdc-b574-096503383a9b",
+      "name": "Main Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        64,
+        112
+      ],
+      "id": "8d9b08e7-dfd0-436f-baff-c208e3f77b67",
+      "name": "GPT oss 120b",
+      "credentials": {
+        "groqApi": {
+          "id": "hHhfnwsKbpqC9mBd",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool whenever the user needs marketing help.\n\nSend the user's request and available business context to this agent.\n\nThe agent will create campaigns, content ideas, promotions, and marketing strategies.\n\nDo not use Market Research Agent before this tool unless the user explicitly requests research.",
+        "workflowId": {
+          "__rl": true,
+          "value": "9WosRMyzL5ewSmhp",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/9WosRMyzL5ewSmhp",
+          "cachedResultName": "Marketing Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request ": "={{ $fromAI(\"request\") }}"
+          },
+          "matchingColumns": [
+            "request "
+          ],
+          "schema": [
+            {
+              "id": "request ",
+              "displayName": "request ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        112
+      ],
+      "id": "fd1b76ed-40c3-4474-a770-7409dd941c7f",
+      "name": "Call 'Marketing Agent'"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool whenever the user asks for market research, competitors, trends, customer behaviour, industry analysis, or growth opportunities.\n\nBefore calling this tool, create a clear research query from the user's message.\n\nExample:\nUser: My cafe sales are decreasing\nQuery:\n\"Delhi cafe market trends, competitors and customer behaviour 2026\"\n\nAlways provide the research query in the query input.",
+        "workflowId": {
+          "__rl": true,
+          "value": "7N64oZWxwWWnxjbm",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/7N64oZWxwWWnxjbm",
+          "cachedResultName": "Market Research Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI(\"query\") }}"
+          },
+          "matchingColumns": [
+            "Query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        112
+      ],
+      "id": "4212adbf-f540-4cbf-af61-02bba2f7a36c",
+      "name": "Call 'Market Research Agent'"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=={{ $workflow.id }}",
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        288,
+        144
+      ],
+      "id": "1502f153-d262-4bbf-ab66-cb49781c9c55",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "business-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -128
+      ],
+      "id": "06fe358a-2a7b-466d-ab8f-95fc036c1d78",
+      "name": "Webhook",
+      "webhookId": "75e60674-5be7-4fdb-9a69-a5bc11ecd01d"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { output: $json.output } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        608,
+        -112
+      ],
+      "id": "ddba0fbc-edcd-451e-96aa-d3f77b608675",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GPT oss 120b": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Marketing Agent'": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Market Research Agent'": {
+      "ai_tool": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Main Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "817272c6-0b0f-4f6e-bd80-fac0a51a4d26",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7dde584768c544874a55c5dbdb9d9d3a09b3e6047ea207cf5a76157777d75dc2"
+  },
+  "id": "Ic6y5Sr6rphLgc2I",
+  "tags": []
+}

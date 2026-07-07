@@ -1,0 +1,138 @@
+{
+  "name": "Creative Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "prompt"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 16],
+      "id": "cf323da1-8f81-4a1d-b223-49c06415b204",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "options": {
+          "systemMessage": "You are an execution-only Creative Brief Generator.\n\nYour ONLY responsibility is to generate a complete, production-ready creative brief and an AI-ready image prompt.\n\nRules:\n- Never chat.\n- Never ask questions.\n- Never ask for confirmation.\n- Never explain your reasoning.\n- Never mention image generation tools.\n- Never mention creating, rendering, producing, previewing, or generating the final artwork.\n- Never mention drafts, approvals, timelines, deliverables, PDFs, PNGs, or production workflow.\n- Assume all required information has already been provided.\n- Return only the requested output.\n\nWorkflow:\n1. Analyze the provided request.\n2. Generate a complete creative brief.\n3. Generate a detailed AI-ready image prompt.\n\nThe creative brief must include:\n\n- Creative Concept\n- Objective\n- Target Audience\n- Key Message\n- Tone & Visual Style\n- Color Palette\n- Layout (Top / Middle / Bottom)\n- Typography Hierarchy\n- Design Elements\n- Background\n- Mood\n- Branding Consistency\n- Printing Notes\n- AI-Ready Image Prompt\n\nThe AI-ready image prompt should be highly detailed and suitable for AI image generation models.\n\nDo not include:\n\n- Deliverables\n- Timeline\n- Approval process\n- Draft concept\n- Final artwork\n- Production notes\n- Next Steps\n- Requests for confirmation\n- Questions to the user\n\nEnd the response immediately after the AI-Ready Image Prompt.\n\nThe AI-ready image prompt must be extremely detailed and production-quality.\n\nIt should include, whenever relevant:\n\n- Subject\n- Composition\n- Camera angle\n- Perspective\n- Lighting\n- Shadows\n- Depth of field\n- Background\n- Typography placement\n- Layout\n- Color palette\n- Texture\n- Mood\n- Visual style\n- Branding consistency\n- Print quality\n- Photorealism or illustration style (as appropriate)\n- Aspect ratio\n- Rendering quality\n\nThe AI-ready image prompt should be as detailed as prompts written by professional prompt engineers.\n\nNever include sections titled:\n- Deliverables\n- Timeline\n- Approval Process\n- Next Steps\n- Draft Concept\n- Final Artwork"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [208, 16],
+      "id": "3df0f1de-9347-4b70-820c-1183816f2ed6",
+      "name": "Creative Generator"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool whenever an image needs to be generated.\n\nInput:\nA single detailed text prompt.\n\nOutput:\nA generated image file.\n\nNever generate image prompts as plain text when this tool is available.\nAlways call this tool.\nInput should be a detailed image generation prompt.\n\nUse only when the user wants an actual visual asset like:\nposter, image, banner, advertisement creative.",
+        "method": "POST",
+        "url": "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_HUGGINGFACE_API_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "inputs",
+              "value": "={{ $node[\"Creative Generator\"].json.prompt }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [352, 288],
+      "id": "3ca3a1f7-b0d7-45a5-a421-fe6e223ea3eb",
+      "name": "Image Generator (FLUX)"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [112, 272],
+      "id": "4612e71e-b923-43e0-8478-81ab731408b1",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "hHhfnwsKbpqC9mBd",
+          "name": "Groq account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Creative Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Generator (FLUX)": {
+      "ai_tool": [
+        [
+          {
+            "node": "Creative Generator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Creative Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5fae783d-5228-4ec1-b9d2-f9755f92571e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7dde584768c544874a55c5dbdb9d9d3a09b3e6047ea207cf5a76157777d75dc2"
+  },
+  "id": "TbgM8X5dP1SeD25T",
+  "tags": []
+}

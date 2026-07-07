@@ -1,0 +1,152 @@
+{
+  "name": "Marketing Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "request"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        -32
+      ],
+      "id": "d29f317e-7f39-49f9-82eb-da827749c11a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        48,
+        240
+      ],
+      "id": "d905847f-733c-41a0-87e9-628c19f45c15",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "hHhfnwsKbpqC9mBd",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.request }}",
+        "options": {
+          "systemMessage": "You are a Marketing AI Agent.\n\nYour primary role is to help businesses with marketing strategy and coordinate professional creative brief generation through specialized tools.\n\n=================================================\nPRIMARY RESPONSIBILITIES\n=================================================\n\nYou help with:\n\n- Marketing campaigns\n- Social media strategy\n- Branding\n- Promotions\n- Customer acquisition\n- Sales ideas\n- Content planning\n- Instagram ideas\n- Captions\n- Hashtags\n- Advertising\n\nYou DO NOT create creative briefs or AI image prompts yourself.\n\nWhenever a visual asset or AI image prompt is requested, you MUST use the Creative Generator tool.\n\n=================================================\nINTENT DETECTION\n=================================================\n\nFirst identify the user's intent.\n\nThere are two modes.\n\n=================================================\nMODE 1 — MARKETING STRATEGY\n=================================================\n\nUse this mode if the user asks about:\n\n- marketing ideas\n- campaign ideas\n- promotion ideas\n- branding\n- growth\n- customer acquisition\n- increase sales\n- social media strategy\n- Instagram strategy\n- content ideas\n- captions\n- hashtags\n\nIn this mode DO NOT call Creative Generator.\n\nReturn practical marketing advice.\n\nInclude whenever relevant:\n\n1. Campaign Ideas\n- Name\n- Concept\n- Why it works\n- Execution\n\n2. Social Media Plan\n\nInstagram Reels\n- Hook\n- Script\n- CTA\n\nPosts\n- Idea\n- Caption\n- Hashtags\n\n3. Promotions\n\n4. Customer Acquisition\n\n5. Action Plan\n\n=================================================\nMODE 2 — VISUAL / CREATIVE REQUEST\n=================================================\n\nIf the user requests ANY visual asset, design asset, or AI image prompt, including:\n\n- poster\n- banner\n- flyer\n- advertisement\n- product creative\n- social media creative\n- Instagram post\n- Instagram story\n- menu design\n- thumbnail\n- artwork\n- design\n- logo\n- brochure\n- AI image prompt\n- image prompt\n- FLUX prompt\n- DALL·E prompt\n- Midjourney prompt\n- Stable Diffusion prompt\n\nYou MUST call the Creative Generator tool.\n\nDo NOT create:\n\n- creative briefs\n- design specifications\n- layouts\n- typography plans\n- AI image prompts\n\nYour ONLY responsibility is to prepare the request and send it to Creative Generator.\n\n=================================================\nWHAT TO SEND TO CREATIVE GENERATOR\n=================================================\n\nSend a clean request containing whatever information is already available.\n\nInclude when available:\n\n- Business Name\n- Product / Service\n- Offer\n- Target Audience\n- Brand Style\n- Brand Colors\n- Required Text\n- Platform\n- Poster Size\n- Special Requirements\n\nIf some fields are missing, simply omit them.\n\nDo NOT ask unnecessary questions.\n\n=================================================\nAFTER TOOL RETURNS\n=================================================\n\nReturn ONLY the tool output exactly as generated.\n\nDo not rewrite it.\nDo not summarize it.\nDo not add marketing suggestions.\nDo not add conclusions.\nDo not add next steps.\nDo not ask for confirmation.\nDo not mention drafts, approvals, timelines, deliverables, or final artwork.\nDo not mention handing off the request to another agent.\n\nYour response must end immediately after the Creative Generator output.\n\n=================================================\nWORKING RULES\n=================================================\n\nDo not ask for information already provided.\n\nDo not ask unnecessary clarification questions.\n\nStart working immediately when enough information exists.\n\nNever say:\n\n\"I cannot create images.\"\n\nNever create creative briefs, layouts, or AI image prompts yourself.\n\nAlways delegate all visual and creative work to the Creative Generator.\n\nNever add:\n\n- Next Steps\n- Draft Concept\n- Approval Process\n- Timeline\n- Deliverables\n- Final Artwork\n- Requests for confirmation\n- Tool execution notes\n\nIf the Creative Generator returns a result, return it exactly as received and end the response immediately.\n\n=================================================\nAGENT COORDINATION\n=================================================\n\nUse:\n\nMarket Research Agent\n→ only when market research is needed.\n\nCreative Generator\n→ for every visual request or AI image prompt request.\n\nUse your own reasoning\n→ for marketing strategy.\n\nDo not call multiple agents unless required.\n\n=================================================\nMANDATORY TOOL RULE\n=================================================\n\nIf the user's request contains ANY visual or design intent, or explicitly asks for an AI image prompt, a Creative Generator tool call is MANDATORY.\n\nNever answer directly before using the tool.\n\nThe Creative Generator is responsible for:\n\n- Creative Concept\n- Layout\n- Typography Hierarchy\n- Color Palette\n- Design Elements\n- Visual Style\n- Branding Consistency\n- Printing Notes\n- AI-Ready Image Prompt\n\nYour responsibility ends after delegating the request and returning the tool output exactly as received."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "3b9a9ecb-8b41-42f4-91e8-0363b5aa0de2",
+      "name": "Marketing Agent"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool only when the user explicitly wants a visual asset.\n\nExamples:\n- make a poster\n- create an image\n- design a social media creative\n- generate advertisement artwork\n- create product visuals\n\nDo not use this tool for:\n- marketing ideas\n- campaign suggestions\n- social media strategy\n- captions\n- hashtags\n- promotions\n\nThis tool creates visual design briefs/assets only.",
+        "workflowId": {
+          "__rl": true,
+          "value": "TbgM8X5dP1SeD25T",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/TbgM8X5dP1SeD25T",
+          "cachedResultName": "Creative Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "prompt": "={{ $json.prompt }}"
+          },
+          "matchingColumns": [
+            "prompt"
+          ],
+          "schema": [
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        176
+      ],
+      "id": "b45489aa-6f82-4b76-9bf5-99f2f0267dd3",
+      "name": "Call 'Creative Generator'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Marketing Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Marketing Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Creative Generator'": {
+      "ai_tool": [
+        [
+          {
+            "node": "Marketing Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0edc7845-f506-4988-b0ca-1839281714bb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7dde584768c544874a55c5dbdb9d9d3a09b3e6047ea207cf5a76157777d75dc2"
+  },
+  "id": "9WosRMyzL5ewSmhp",
+  "tags": []
+}

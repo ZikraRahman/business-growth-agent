@@ -1,0 +1,138 @@
+{
+  "name": "Market Research Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This tool searches the internet for current market research data.\n\nUse this tool for:\n- market trends\n- competitor analysis\n- customer behaviour\n- industry research\n- business opportunities\n\nYou must use this tool before creating any market research answer.",
+        "q": "={{ $fromAI(\"query\") }}",
+        "locationSettings": {},
+        "languageSettings": {},
+        "searchOptions": {},
+        "timeFilters": {},
+        "pagination": {},
+        "advancedOptions": {},
+        "requestOptions": {}
+      },
+      "type": "@searchapi/n8n-nodes-searchapi.searchApiTool",
+      "typeVersion": 1,
+      "position": [
+        640,
+        560
+      ],
+      "id": "173458ad-9101-4e08-9600-9311089dcc70",
+      "name": "Search google in SearchApi",
+      "credentials": {
+        "searchApi": {
+          "id": "38l9KWAU9clOUNVt",
+          "name": "Market Research Search Tool"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.query}}",
+        "options": {
+          "systemMessage": "You are a Market Research Analyst AI.\n\nYour task is to research businesses, industries, competitors, and customer behaviour.\n\nYou will receive a research query.\n\nAnalyze:\n- Market trends\n- Competitors\n- Customer preferences\n- Business opportunities\n- Possible growth ideas\n\nUse SearchApi to gather current information.\n\nReturn a structured research report.\n\nFormat:\n\nMarket Overview:\n-\n\nTrends:\n-\n\nCompetitor Insights:\n-\n\nCustomer Behaviour:\n-\n\nOpportunities:\n-\n\nRecommendations:\n-\n\nWhen providing statistics or percentages, mention the source if available.\nIf exact data is unavailable, avoid making unsupported numerical claims.\n\nIMPORTANT TOOL RULE:\n\nYou have access to \"Market Research Search Tool\".\n\nFor every research request:\n1. First call Market Research Search Tool.\n2. Analyze the returned information.\n3. Then prepare the report.\n\nNever answer directly without using the tool."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        480,
+        352
+      ],
+      "id": "2a4404df-54af-4af6-bf09-082b1856aa9f",
+      "name": "Market Research Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        416,
+        608
+      ],
+      "id": "2ed3a4d8-b65b-485c-b602-0e683e0223fe",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "hHhfnwsKbpqC9mBd",
+          "name": "Groq account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Market Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search google in SearchApi": {
+      "ai_tool": [
+        [
+          {
+            "node": "Market Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Market Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a7b4c488-428f-4702-8540-0130ac6db3af",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7dde584768c544874a55c5dbdb9d9d3a09b3e6047ea207cf5a76157777d75dc2"
+  },
+  "id": "7N64oZWxwWWnxjbm",
+  "tags": []
+}
